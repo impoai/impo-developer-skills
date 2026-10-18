@@ -1,13 +1,14 @@
 # Impo developer skills
 
 Agent skills for building [Impo](https://impo.ai) gadgets. With your Impo developer API key, an
-agent such as Claude Code can create products, edit and preview their manifests, push new dev
-revisions, publish them to production for a firmware version, register official units and pair
-development devices — from the repository where your firmware lives.
+agent such as Claude Code does the whole developer workflow from the repository where your
+firmware lives: create a product, write and preview its manifest, push dev revisions, connect a
+development device (an ESP32 board or the bundled virtual lamp), publish to production for a
+firmware version and register official units.
 
 | Skill | What it does |
 | --- | --- |
-| [`impo-gadget-developer`](skills/impo-gadget-developer/SKILL.md) | Products, manifests, publishing, units and development pairing through the Impo developer API |
+| [`impo-gadget-developer`](skills/impo-gadget-developer/SKILL.md) | Products, manifests, development devices, publishing and units through the Impo developer API |
 
 ## Before you start
 
@@ -44,30 +45,35 @@ The skill is a `SKILL.md` with a standard-library Python CLI, so agents that rea
 
 Ask your agent, for example:
 
-- "List my Impo products."
-- "Add a `lamp.temperature` command with warm, neutral and cool to the studio-lamp manifest for firmware 1.2."
+- "Create an Impo product called Studio Lamp and write its manifest from this firmware."
+- "Add a `lamp.temperature` command with warm, neutral and cool to the Studio Lamp manifest for firmware 1.2."
 - "Preview what the agent will be told about my lamp."
-- "Publish the studio-lamp manifest for firmware 1.2 to production."
-- "Pair this board as a development device."
+- "Build this ESP32 firmware with my product ID and flash it."
+- "Try my product with the virtual lamp."
+- "Publish the Studio Lamp manifest for firmware 1.2 to production."
 
 The CLI also works on its own:
 
 ```sh
-python3 skills/impo-gadget-developer/scripts/impo.py products
-python3 skills/impo-gadget-developer/scripts/impo.py manifest pull studio-lamp -o studio-lamp.manifest.json
-python3 skills/impo-gadget-developer/scripts/impo.py manifest push studio-lamp.manifest.json
-python3 skills/impo-gadget-developer/scripts/impo.py manifest publish studio-lamp --min-firmware 1.2.0
+cd skills/impo-gadget-developer
+python3 scripts/impo.py product create "Studio Lamp"        # prints the product ID (a UUID)
+python3 scripts/impo.py manifest pull <product id> -o studio-lamp.manifest.json
+python3 scripts/impo.py manifest push studio-lamp.manifest.json
+python3 scripts/impo.py pair "Studio lamp" -o pairing.json
+python3 examples/virtual_lamp.py --pairing pairing.json --product <product id>
+python3 scripts/impo.py manifest publish <product id> --min-firmware 1.2.0
 ```
 
 ## How it fits together
 
-- A **product** is one kind of gadget: a permanent ID the firmware declares as `product_id`, a
-  name and manifests.
+- A **product** is one kind of gadget: a permanent ID (a UUID Impo assigns when you create it;
+  the firmware declares it as `product_id`), a name (a label you can change) and manifests.
 - A **manifest** tells the user's Impo agent what the gadget is and which commands and events it
   has. Each one is for a channel (dev or production) and a minimum firmware version; a device reads
   the highest one not above its own firmware.
-- A **development device** is paired with your API key and joins your account; it reads the dev
-  manifest. An **official unit** carries a per-unit eFuse key from a production batch, is set up by
+- A **development device** joins your own account and reads the dev manifest. An ESP32 board
+  built with your product ID is set up in the Impo app; a program on a computer, such as the
+  virtual lamp, uses `pairing.json` from `impo.py pair`. An **official unit** carries a per-unit eFuse key from a production batch, is set up by
   its owner in the Impo app and reads the production manifest.
 
 An API key cannot create keys, change your profile or create batches; use the
@@ -76,8 +82,9 @@ An API key cannot create keys, change your profile or create batches; use the
 ## API key and device tokens
 
 Your API key stays on your computer, server or CI. Never put it in firmware, an app or a
-repository. A device gets its own tokens: `impo.py pair` uses the key once and writes
-`pairing.json` for that one device; copy that file to a board.
+repository. A device gets its own tokens: an ESP32 board from the Impo app during setup, a
+program on a computer from `impo.py pair`, which uses the key once and writes `pairing.json` for
+that one device.
 
 | | API key | Device tokens (`pairing.json`) |
 | --- | --- | --- |

@@ -54,7 +54,7 @@ the agent.
 
 ```json
 {
-  "product": "studio-lamp",
+  "product": "6f1c2b9e-4a7d-4e2b-9c1a-3d5e7f9a1b2c",
   "minFirmware": "1.2.0",
   "systemPrompt": "Studio Lamp is a desk lamp with a warm and a cool LED channel. Turn it on when the user starts focused work and dim it in the evening. Never change the colour temperature during a video call.",
   "commands": [
@@ -73,5 +73,5 @@ the agent.
 }
 ```
 
-The `product` field tells the CLI which product the file belongs to; it is not sent as part of the
-manifest.
+The `product` field is the product's ID (the UUID from `impo.py products`) and tells the CLI which
+product the file belongs to; it is not sent as part of the manifest.
