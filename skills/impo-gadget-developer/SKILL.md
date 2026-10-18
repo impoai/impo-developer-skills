@@ -64,9 +64,11 @@ enforced on save, and the server's error says which field is wrong. Good manifes
 
 ## Development devices
 
-`python3 scripts/impo.py pair "Desk lamp" -o pairing.json` pairs one development device to the key
-owner's account and writes its `pairing.json` (gateway tokens, file mode 0600). The device then
-connects with the Impo gadget SDK and declares its `product_id`; it reads the dev manifest. Use a
+`python3 scripts/impo.py pair "Desk lamp" -o pairing.json` runs on the user's computer. It uses the
+key once to create tokens for one development device and writes them to `pairing.json` (file mode
+0600). For a board, copy `pairing.json` into its storage; the board never holds the key. The device
+connects with the Impo gadget SDK using those tokens and declares its `product_id`; it reads the dev
+manifest. Use a
 new pair call per device; to retry a lost response for the same device, pass the printed
 `--request-id`. `pairing.json` is a device credential: keep it out of version control.
 
@@ -81,8 +83,27 @@ With a key you can register units into an existing batch (`unit register <produc
 
 Create or revoke keys, change the developer profile, or create batches. Those return
 `session_required`; send the user to https://impo.ai/developers. A key never accesses anyone's
-conversations or the Impo app API. If a key leaks (it may be built into development firmware),
-revoke it in the portal and create a new one.
+conversations or the Impo app API. If a key may have leaked, revoke it in the portal and create a
+new one.
+
+## API key and device tokens
+
+Only the device tokens ever go on a device. Never put the API key in firmware, app code, a browser,
+a repository or a manifest; if the user asks to, explain why and use `pair` instead.
+
+| | API key | Device tokens (`pairing.json`) |
+| --- | --- | --- |
+| What it is | `impo_dev_…`, generated on the portal's API keys page | `access_token` and `refresh_token`, created for one device by `pair` |
+| Where it lives | The user's computer, server or CI secrets (`IMPO_API_KEY`) | The one device it was created for |
+| Bound to | The developer account | The account and one pairing (one device); not to a product or the hardware |
+| Can | Pair devices; manage products, manifests and units | Connect that device to the account through the gadget gateway |
+| Cannot | Create keys, change the profile, create batches, sign in | Edit manifests, pair other devices, call the developer API |
+| Expires | Never; until revoked | `access_token` 4 hours (renewed automatically); `refresh_token` 365 days |
+| To stop it | Revoke it in the portal | Remove the device from the account (Gadgets); pair again for new tokens |
+
+The device declares `product_id` on every connection and reads that product's dev manifest only if
+the product belongs to the account. Official units use neither: their eFuse key proves them, and the
+Impo app gives them tokens for their owner's account.
 
 ## Errors
 

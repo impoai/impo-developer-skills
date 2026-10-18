@@ -71,7 +71,23 @@ python3 skills/impo-gadget-developer/scripts/impo.py manifest publish studio-lam
   its owner in the Impo app and reads the production manifest.
 
 An API key cannot create keys, change your profile or create batches; use the
-[developer portal](https://impo.ai/developers) for those. Revoke a key there if it leaks.
+[developer portal](https://impo.ai/developers) for those. Revoke a key there if it may have leaked.
+
+## API key and device tokens
+
+Your API key stays on your computer, server or CI. Never put it in firmware, an app or a
+repository. A device gets its own tokens: `impo.py pair` uses the key once and writes
+`pairing.json` for that one device; copy that file to a board.
+
+| | API key | Device tokens (`pairing.json`) |
+| --- | --- | --- |
+| Bound to | Your developer account | Your account and one device; not a product or the hardware |
+| Can | Pair devices; manage products, manifests and units | Connect that one device to your account |
+| Cannot | Create keys, change your profile, create batches, sign in | Edit manifests, pair other devices, call the developer API |
+| Expires | Never; until you revoke it | Access token 4 hours (renewed); refresh token 365 days |
+| To stop it | Revoke it in the portal | Remove the device from your account (Gadgets); pair again |
+
+Details: https://impo.ai/developers/docs#credentials
 
 Docs: https://impo.ai/developers/docs · API reference: https://impo.ai/developers/docs/api
 
