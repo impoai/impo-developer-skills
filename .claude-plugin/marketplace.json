@@ -1,0 +1,11 @@
+{
+  "name": "impo",
+  "owner": { "name": "Impo", "email": "info@impo.ai" },
+  "plugins": [
+    {
+      "name": "impo-developer",
+      "source": "./",
+      "description": "Build Impo gadgets: manage products and manifests with an Impo developer API key."
+    }
+  ]
+}
