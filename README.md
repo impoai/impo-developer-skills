@@ -68,8 +68,10 @@ python3 scripts/impo.py manifest publish <product id> --min-firmware 1.2.0
 
 - A **product** is one kind of gadget: a permanent ID (a UUID Impo assigns when you create it;
   the firmware declares it as `product_id`), a name (a label you can change) and manifests.
-- A **manifest** tells the user's Impo agent what the gadget is and which commands and events it
-  has. Each one is for a channel (dev or production) and a minimum firmware version; a device reads
+- A **manifest** tells the user's Impo agent what the gadget is, which commands and events it
+  has, and which scenarios describe goal-specific behavior. Scenarios stay separate from its
+  general system prompt and can be edited through the API, CLI or developer portal.
+  Each manifest is for a channel (dev or production) and a minimum firmware version; a device reads
   the highest one not above its own firmware.
 - A **development device** joins your own account and reads the dev manifest. An ESP32 board
   built with your product ID is set up in the Impo app; a program on a computer, such as the
@@ -101,3 +103,7 @@ Docs: https://impo.ai/developers/docs · API reference: https://impo.ai/develope
 ## License
 
 MIT
+
+## Verification
+
+Run `python3 -m unittest discover -s tests` to check manifest round trips and compatibility.

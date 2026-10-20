@@ -1,7 +1,7 @@
 {
   "name": "impo-developer",
   "description": "Build Impo gadgets: manage products and manifests, publish for firmware versions and pair development devices with an Impo developer API key.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": { "name": "Impo", "email": "info@impo.ai" },
   "homepage": "https://impo.ai/developers/",
   "license": "MIT"

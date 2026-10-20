@@ -1,7 +1,14 @@
 {
   "product": "REPLACE_WITH_YOUR_PRODUCT_ID",
   "minFirmware": "0",
-  "systemPrompt": "Studio Lamp is a virtual desk lamp. Turn it on when the user starts focused work and off when they are done.",
+  "systemPrompt": "Studio Lamp is a virtual desk lamp.",
+  "scenarios": [
+    {
+      "name": "Focused work",
+      "when": "The user starts or finishes focused work.",
+      "instructions": "Turn the lamp on when work starts and off when work finishes. Report the confirmed result."
+    }
+  ],
   "commands": [
     {
       "name": "lamp.set",

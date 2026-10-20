@@ -1,6 +1,6 @@
 ---
 name: impo-gadget-developer
-description: The whole Impo gadget developer workflow with an Impo developer API key — create products (Impo assigns each a UUID product ID), pull a manifest to a file, edit its system prompt, commands and events, preview the agent instructions, push a new dev revision, connect a development device (an ESP32 board built with the product ID and set up in the Impo app, or a program on a computer paired with pairing.json, such as the bundled virtual lamp), publish to production for a firmware version, and register official units. Use whenever someone builds an Impo gadget or asks to change what the Impo agent knows about their device ("update my gadget's manifest", "add a command to my lamp", "publish the manifest for firmware 1.2", "connect my dev board to Impo", "try my product with the virtual lamp").
+description: The whole Impo gadget developer workflow with an Impo developer API key — create products (Impo assigns each a UUID product ID), pull a manifest to a file, edit its system prompt, scenarios, commands and events, preview the agent instructions, push a new dev revision, connect a development device (an ESP32 board built with the product ID and set up in the Impo app, or a program on a computer paired with pairing.json, such as the bundled virtual lamp), publish to production for a firmware version, and register official units. Use whenever someone builds an Impo gadget or asks to change what the Impo agent knows about their device ("update my gadget's manifest", "add a command to my lamp", "publish the manifest for firmware 1.2", "connect my dev board to Impo", "try my product with the virtual lamp").
 ---
 
 # Impo gadget developer
@@ -64,12 +64,16 @@ developer's own account (connected development devices pick it up without reconn
 Write a manifest with `reference/manifest.md` open: names, limits and the JSON Schema subset are
 enforced on save, and the server's error says which field is wrong. Good manifests:
 
-- `systemPrompt`: what the device is, where it sits, and when the agent should and should not use
+- `systemPrompt`: what the device is, where it sits, and general rules for when the agent should and should not use
   it (for example "never change the colour temperature during a video call"). Plain sentences.
 - One command per action, named `area.verb` (`lamp.set`, `display.show_text`), with a description
   that says what happens and any limits, and tight parameter schemas (`enum`, `minimum`,
   `maxLength`, `required`, `additionalProperties: false`).
 - Events for things the device notices (`button_pressed`), each with a short description.
+- `scenarios`: goal-specific behavior in separate `{name, when, instructions}` entries. Explain
+  how to combine capabilities, check results, stop and deliver the outcome. Keep these out of
+  the general system prompt. Pull before editing to preserve other scenarios; use an empty array
+  to clear them. Scenarios guide the agent and do not grant permissions or add commands.
 
 ## 3. Connect a development device
 

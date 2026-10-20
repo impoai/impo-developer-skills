@@ -18,7 +18,7 @@ Standard library only; Python 3.9+.
 
 <id> is a product ID: the UUID Impo assigned, never the name. A manifest file is the manifest
 plus the product it belongs to:
-  {"product": "<product id>", "minFirmware": "1.0.0", "systemPrompt": "...", "commands": [...], "events": [...]}
+  {"product": "<product id>", "minFirmware": "1.0.0", "systemPrompt": "...", "commands": [...], "events": [...], "scenarios": [...]}
 """
 
 import argparse
@@ -35,7 +35,7 @@ from pathlib import Path
 
 DEFAULT_API = "https://impo.ai/api/v1/developers"
 PRODUCT_ID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
-MANIFEST_FIELDS = ("minFirmware", "systemPrompt", "commands", "events")
+MANIFEST_FIELDS = ("minFirmware", "systemPrompt", "commands", "events", "scenarios")
 
 
 class APIError(Exception):
@@ -163,7 +163,7 @@ def main():
                 raise SystemExit(f"No {args.channel} manifest" + (f" for firmware {args.min_firmware}" if args.min_firmware else "") + ".")
             if args.min_firmware is None and len(chosen) > 1:
                 raise SystemExit("Several firmware versions have manifests: " + ", ".join(m["minFirmware"] for m in chosen) + ". Pass --min-firmware.")
-            value = {"product": args.id, **{field: chosen[0][field] for field in MANIFEST_FIELDS}}
+            value = {"product": args.id, **{field: chosen[0][field] for field in MANIFEST_FIELDS if field in chosen[0]}}
             text = json.dumps(value, indent=2) + "\n"
             if args.output:
                 Path(args.output).write_text(text); print(f"Wrote {args.output} (revision {chosen[0]['revision']}).")
